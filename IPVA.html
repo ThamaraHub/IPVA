@@ -1,0 +1,104 @@
+<meta charset="utf-8">
+
+<h2>.:: Ipva::.</h2>
+
+<!-- Cabeçalho-->
+<strong>Sistema:</strong> Sistema IPVA <br>
+<strong>Autor:</strong> Fulano <br>
+<strong>Versão:</strong> 1.0 <br>
+<hr>
+
+<!-- Conteúdo-->
+Tipo Veiculo: {Digite: A - [Automóvel] | M - [Moto] | C - [Caminhão]} <br>
+<input type="text" id="campoTipoVeiculo"> <br><br>
+Marca: <br>
+<input type="text" id="campoMarca"> <br><br>
+Modelo: <br>
+<input type="text" id="campoModelo"> <br><br>
+Valor Venal: <br>
+<input type="text" id="campoValorVenal"> <br><br>
+
+<button onclick="criaSistema()">Enviar</button> 
+<button onclick="processar()">Processar</button> <br>
+
+<!-- Rodapé -->
+<hr>
+<strong>Fórmula: </strong> VALOR VENAL * TAXA [Automóvel - 4%/Motos - 2% / Caminhão - 8%]<br>
+
+<script src="js/libNumero.js"></script>
+<script src="js/mostra.js"></script>
+<script>
+    var soma = 0.0
+
+    function calculaIPVA(valor, taxa) {
+        return valor * taxa
+    }
+
+    function exibeNaTela(tipoVeiculo,taxa, marca, modelo, valorVenal, ipva) {
+            mostra(`
+                <hr>
+                <strong>Tipo Veiculo:</strong>  ${tipoVeiculo} <br>
+                <strong>Marca:</strong>   ${marca} <br>
+                <strong>Modelo:</strong>   ${modelo} <br>
+                <strong>Valor Venal:</strong> ${taxa} 4% [Automóvel - 4%/Motos - 2% / Caminhão - 8%]<br>
+                <strong>Valor IPVA:</strong> R$   ${ipva.toFixed(2).replace(".", ",")} <br>
+            `)
+    }
+
+    function validaSemPreenchimentoEValorNegativo(valorVenal){
+        if(isNaN(valorVenal) || valorVenal < 0) {
+            return true
+
+        }
+
+        return false
+    }
+
+    function validaTipoVeiculo(tipoVeiculo) {
+        if(tipoVeiculo == 'A' || tipoVeiculo == 'a' || tipoVeiculo == 'M' || tipoVeiculo == 'm' || tipoVeiculo == 'C' || tipoVeiculo == 'c') {
+            return true
+        }
+
+        return false
+    }
+
+    function criaSistema() {
+        var tipoVeiculo = campoTipoVeiculo.value
+        var marca = campoMarca.value
+        var modelo = campoModelo.value
+        var valorVenal = pegaNumero(campoValorVenal.value)
+        
+        if(validaSemPreenchimentoEValorNegativo(valorVenal)) {
+            alert("Valor Invalido")
+            return
+        }
+
+        if(validaTipoVeiculo(tipoVeiculo)) {
+            var ipva
+
+            if (tipoVeiculo == 'A' || tipoVeiculo == 'a') {
+                ipva = calculaIPVA(valorVenal, 0.04)
+                exibeNaTela("Automovel", 0.04, marca, modelo, valorVenal, ipva)
+            } else if (tipoVeiculo == 'M' || tipoVeiculo == 'm'){
+                ipva = calculaIPVA(valorVenal, 0.02)
+                exibeNaTela("Moto",0.02, marca, modelo, valorVenal, ipva)
+            } else {
+                ipva = calculaIPVA(valorVenal, 0.08)
+                exibeNaTela("Caminhão",0.08, marca, modelo, valorVenal, ipva)
+            }
+
+        
+            soma = soma + ipva
+        
+
+        } else {
+            alert("Tipo de Veículo inválido! Tente novamente...")
+            return
+        }
+
+    }
+
+    function processar() {
+        mostra(`<strong>.::Total Arrecadado: R$  ${soma.toFixed(2).replace(".", ",")} ::.</strong>`)
+    }
+</script>
